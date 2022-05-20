@@ -37,24 +37,20 @@ module.exports = {
     lastUpdated: false,
     nav: [
       {
+        text: 'Try Keva Cloud',
+        link: 'https://cloud.keva.dev',
+      },
+      {
         text: 'Documentations',
         link: '/guide/',
       },
       {
         text: 'Blogs',
-        link: 'https://tuhuynh.com/tags/keva',
+        link: 'https://blog.keva.dev',
       },
       {
         text: 'Team',
         link: '/team/',
-      },
-      {
-        text: 'Keva IoC',
-        link: 'https://github.com/keva-dev/keva-ioc',
-      },
-      {
-        text: 'Keva Web',
-        link: 'https://github.com/keva-dev/keva-web',
       },
       {
         text: 'Slack',

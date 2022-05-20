@@ -1,5 +1,6 @@
 package dev.keva.core.server;
 
+import dev.keva.core.command.impl.string.GetEx;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -7,13 +8,12 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisDataException;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import redis.clients.jedis.params.GetExParams;
+import redis.clients.jedis.params.StrAlgoLCSParams;
 import redis.clients.jedis.params.StrAlgoLCSParams;
 import redis.clients.jedis.params.ZAddParams;
 import redis.clients.jedis.resps.LCSMatchResult;
@@ -1102,6 +1102,107 @@ public abstract class AbstractServerTest {
             assertEquals(lcs1.getMatches().get(3).getB().getStart(), 0);
             assertEquals(lcs1.getMatches().get(3).getB().getEnd(), 1);
             assertEquals(lcs1.getMatches().get(3).getMatchLen(), 2);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void substr() {
+        try {
+            String set = jedis.set("mykey", "This is a string");
+            assertEquals("OK", set);
+
+            String substr1 = jedis.substr("mykey", 0, 3);
+            assertEquals("This", substr1);
+
+            String substr2 = jedis.substr("mykey", -3, -1);
+            assertEquals("ing", substr2);
+
+            String substr3 = jedis.substr("mykey", -3, -2);
+            assertEquals("in", substr3);
+
+            String substr4 = jedis.substr("mykey", -3, -3);
+            assertEquals("i", substr4);
+
+            String substr5 = jedis.substr("mykey", 0, -1);
+            assertEquals("This is a string", substr5);
+
+            String substr6 = jedis.substr("mykey", 0, -2);
+            assertEquals("This is a strin", substr6);
+
+            String substr7 = jedis.substr("mykey", 10, 100);
+            assertEquals("string", substr7);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void getex() {
+        try {
+            jedis.set("mykey", "Hello");
+//            String getex = jedis.getEx("mykey", GetExParams.getExParams()); // How to call getex without param??
+//            assertEquals("Hello", getex);
+//            long ttl = jedis.ttl("mykey");
+//            assertEquals(-1, ttl); // ttl unimplemented
+//            String getex = jedis.getEx("mykey", GetExParams.getExParams().ex(60));
+//            long ttl = jedis.ttl("mykey");
+//            assert(ttl <= 60);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void msetnx() {
+        try {
+            long val1 = jedis.msetnx("key1", "Hello", "key2", "there");
+            assertEquals(1, val1);
+            long val2 = jedis.msetnx("key2", "new", "key3", "world");
+            assertEquals(0, val2);
+            List<String> values = jedis.mget("key1", "key2", "key3");
+            assertEquals("Hello", values.get(0));
+            assertEquals("there", values.get(1));
+            assertEquals(null, values.get(2));
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void psetnx() {
+        try {
+            String val1 = jedis.psetex("mykey", 1000, "Hello");
+            assertEquals("OK", val1);
+//            long val2 = jedis.pttl("mykey"); // pttl unimplemented
+//            assert(val2 <= 1000);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void setex() {
+        try {
+            String val1 = jedis.setex("mykey", 10, "Hello");
+            assertEquals("OK", val1);
+//            long val2 = jedis.pttl("mykey"); // pttl unimplemented
+//            assert(val2 <= 1000);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void setnx() {
+        try {
+            long val1 = jedis.setnx("mykey", "Hello");
+            assertEquals(1, val1);
+            long val2 = jedis.setnx("mykey", "World");
+            assertEquals(0, val2);
+            String val3 = jedis.get("mykey");
+            assertEquals("Hello", val3);
         } catch (Exception e) {
             fail(e);
         }

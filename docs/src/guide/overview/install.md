@@ -8,7 +8,7 @@
 ## Download
 
 ```
-curl -L -o /usr/local/bin/keva-server https://github.com/keva-dev/keva/releases/download/v1.0.0-rc0/keva-server
+curl -L -o /usr/local/bin/keva-server https://github.com/keva-dev/keva/releases/download/v1.0.0-rc1/keva-server
 chmod +x /usr/local/bin/keva-server
 ```
 
@@ -24,7 +24,7 @@ Parameters:
 
     Option                          Description
     ------                          -----------
-    --port <Integer>                Accept connections on the specified port (default: 6379)
+    --p, --port <Integer>           Accept connections on the specified port (default: 6379)
     --save <Boolean>                Enable save the DB to disk (default: true)
     --appendonly <Boolean>          Enable append-only-file (default: false)
     --appendfsync <Integer>         Define append-only fsync in ms (default: 1000)

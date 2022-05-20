@@ -12,6 +12,8 @@ public interface KevaDatabase {
 
     void put(byte[] key, byte[] val);
 
+    void removeExpire(byte[] key);
+
     void expireAt(byte[] key, long timestampInMillis);
 
     boolean rename(byte[] key, byte[] newKey);
@@ -90,4 +92,5 @@ public interface KevaDatabase {
 
     void mset(byte[]... key);
 
+    byte[] substr(byte[] key, int startInt, int endInt);
 }

@@ -97,6 +97,12 @@ public class OnHeapDatabaseImpl implements KevaDatabase {
     }
 
     @Override
+    public void removeExpire(byte[] key) {
+        BytesKey expireKey = getExpireKey(key);
+        map.remove(expireKey);
+    }
+
+    @Override
     public byte[] get(byte[] key) {
         lock.lock();
         try {
@@ -917,6 +923,32 @@ public class OnHeapDatabaseImpl implements KevaDatabase {
                 curVal = curVal - amount;
                 return new BytesValue(Long.toString(curVal).getBytes(StandardCharsets.UTF_8));
             }).getBytes();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public byte[] substr(byte[] key, int startInt, int endInt) {
+        lock.lock(); // Lock global lock (for Keva transaction)
+        try {
+            BytesValue value = map.get(new BytesKey(key));
+            if (value == null) {
+                return null;
+            }
+
+            // Convert negative indexes to positive ones
+            if (startInt < 0 && endInt < 0 && startInt > endInt) {
+                return null;
+            }
+            if (startInt < 0) startInt = value.getBytes().length + startInt;
+            if (endInt < 0) endInt = value.getBytes().length + endInt;
+            if (startInt < 0) startInt = 0;
+            if (endInt < 0) endInt = 0;
+            if (endInt >= value.getBytes().length) endInt = value.getBytes().length - 1;
+
+            String valueStr = new String(value.getBytes(), StandardCharsets.UTF_8);
+            String subStr = valueStr.substring(startInt, endInt);
+            return subStr.getBytes(StandardCharsets.UTF_8);
         } finally {
             lock.unlock();
         }
