@@ -7,7 +7,7 @@ import dev.keva.core.exception.CommandException;
 import dev.keva.ioc.annotation.Autowired;
 import dev.keva.ioc.annotation.Component;
 import dev.keva.protocol.resp.reply.StatusReply;
-import dev.keva.store.KevaDatabase;
+import dev.keva.storage.KevaDatabase;
 
 import java.nio.charset.StandardCharsets;
 
@@ -35,7 +35,7 @@ public class PSetEX {
             throw new CommandException("invalid expire time in 'psetex' command");
         }
         database.put(params[0], params[2]);
-        database.expireAt(params[0], System.currentTimeMillis() + milliseconds);
+        database.setExpiration(params[0], System.currentTimeMillis() + milliseconds);
         return StatusReply.OK;
     }
 }
